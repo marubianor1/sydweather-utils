@@ -97,3 +97,70 @@ def time_split(
         "X_test":  X_test,  "y_test":  y_test,
         "feature_cols": feature_cols,
     }
+def build_features(
+    df: pd.DataFrame,
+    *,
+    rolling_window: int = 7,
+    add_lags: bool = True,
+    add_rolling: bool = True,
+    one_hot_weather_code: bool = True,
+    impute: bool = True,
+    verbose: bool = False,
+) -> pd.DataFrame:
+    if not isinstance(df.index, pd.DatetimeIndex):
+        raise TypeError("`df` must have a DatetimeIndex (set_index('time') first).")
+
+    out = df.copy()
+
+    # Time features
+    out["month"] = out.index.month
+    out["day_of_year"] = out.index.dayofyear
+    out["day_of_week"] = out.index.dayofweek
+
+    # Lags
+    if add_lags:
+        for c in ["precipitation_sum", "rain_sum", "shortwave_radiation_sum"]:
+            if c in out.columns:
+                out[f"{c}_lag1"] = out[c].shift(1)
+
+    # Rolling
+    if add_rolling:
+        if "temperature_2m_max" in out.columns:
+            out["temp_max_roll_mean7"] = (
+                out["temperature_2m_max"].shift(1)
+                .rolling(rolling_window, min_periods=rolling_window)
+                .mean()
+            )
+        if "precipitation_sum" in out.columns:
+            out["precip_sum_roll_sum7"] = (
+                out["precipitation_sum"].shift(1)
+                .rolling(rolling_window, min_periods=rolling_window)
+                .sum()
+            )
+
+    # Cyclical encodings
+    if "wind_direction_10m_dominant" in out.columns:
+        rad = np.deg2rad(out["wind_direction_10m_dominant"])
+        out["wind_dir_sin"] = np.sin(rad)
+        out["wind_dir_cos"] = np.cos(rad)
+
+    out["month_sin"] = np.sin(2 * np.pi * out["month"] / 12.0)
+    out["month_cos"] = np.cos(2 * np.pi * out["month"] / 12.0)
+    out["day_of_year_sin"] = np.sin(2 * np.pi * out["day_of_year"] / 366.0)
+    out["day_of_year_cos"] = np.cos(2 * np.pi * out["day_of_year"] / 366.0)
+
+    # One-hot for weather_code
+    if one_hot_weather_code and "weather_code" in out.columns:
+        out = pd.get_dummies(out, columns=["weather_code"], prefix="weather_code", dtype="uint8")
+
+    # Impute
+    if impute:
+        if verbose:
+            n_before = out.isna().sum().sum()
+            if n_before:
+                print(f"[build_features] imputing {n_before} missing values...")
+        out = _median_mode_impute(out)
+    else:
+        out = out.dropna()
+
+    return out

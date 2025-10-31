@@ -1,7 +1,7 @@
 # pyproject.toml
 [project]
 name = "sydweather-utils"
-version = "0.2.0"
+version = "0.2.1"
 description = "Utilities for time-series weather/market feature engineering and splits"
 readme = "README.md"
 requires-python = ">=3.9"

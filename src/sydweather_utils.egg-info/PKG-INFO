@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: sydweather-utils
-Version: 0.2.0
+Version: 0.2.1
 Summary: Utilities for time-series weather/market feature engineering and splits
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
