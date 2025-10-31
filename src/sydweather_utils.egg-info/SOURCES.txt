@@ -5,5 +5,4 @@ src/sydweather_utils/core.py
 src/sydweather_utils.egg-info/PKG-INFO
 src/sydweather_utils.egg-info/SOURCES.txt
 src/sydweather_utils.egg-info/dependency_links.txt
-src/sydweather_utils.egg-info/requires.txt
 src/sydweather_utils.egg-info/top_level.txt

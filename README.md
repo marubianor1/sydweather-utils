@@ -1,10 +1,14 @@
-# sydweather-utils
+## Precise time-based split (preferred)
 
-Two helpers for the Sydney weather ML project:
+```python
+from sydweather_utils import time_split
 
-- `build_features(df, rolling_window=7, one_hot_weather_code=True, impute=True)`
-- `time_split(df, target, test_year=2024, val_size=0.2, stratify=None)`
-
-## Dev install
-```bash
-pip install -e .
+splits = time_split(
+    df_eng_num,                 # DataFrame with DatetimeIndex
+    target="next_day_high",     # name of target column
+    train_cutoff="2024-06-01",  # TRAIN: rows < this date
+    val_cutoff="2024-10-31",    # VAL:   train_cutoff <= rows < this date
+)
+X_train = splits["X_train"]; y_train = splits["y_train"]
+X_val   = splits["X_val"];   y_val   = splits["y_val"]
+X_test  = splits["X_test"];  y_test  = splits["y_test"]
