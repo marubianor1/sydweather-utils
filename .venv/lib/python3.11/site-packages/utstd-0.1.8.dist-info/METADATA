@@ -1,0 +1,34 @@
+Metadata-Version: 2.4
+Name: utstd
+Version: 0.1.8
+Summary: Add your description here
+Requires-Python: >=3.9.13
+Requires-Dist: altair~=5.5.0
+Requires-Dist: ipython>=7.34.0
+Requires-Dist: pandas~=2.2.2
+Requires-Dist: scikit-learn~=1.5.1
+Description-Content-Type: text/markdown
+
+# utstd
+
+# Github Actions
+https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+
+https://docs.astral.sh/uv/guides/integration/github/
+
+# Publish Package
+https://docs.astral.sh/uv/guides/package/#publishing-your-package
+```sh
+
+uv lock
+uv sync
+
+uv version --bump patch
+
+uv build
+uv run --with utstd --no-project -- python -c "import utstd; print(utstd.__version__)"
+
+git add .
+git commit -m ""
+git push
+```

@@ -1,0 +1,2 @@
+[console_scripts]
+utstd = utstd:main
